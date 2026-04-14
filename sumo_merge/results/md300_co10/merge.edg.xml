@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<edges>
+  <edge id="main_before" from="main_start" to="merge_begin" numLanes="3" speed="33.33" priority="2" />
+  <edge id="ramp" from="ramp_start" to="merge_begin" numLanes="1" speed="27.78" priority="1" shape="0.0,-10 48.401,-9.92 93.69,-9.69 135.995,-9.329 175.446,-8.853 212.17,-8.281 246.296,-7.63 277.954,-6.916 307.27,-6.159 334.375,-5.375 359.396,-4.582 382.463,-3.796 403.704,-3.037 423.247,-2.321 441.221,-1.665 457.755,-1.088 472.977,-0.606 487.016,-0.238 500.0,0.0" />
+  <edge id="main_accel" from="merge_begin" to="taper" numLanes="4" speed="33.33" priority="2" />
+  <edge id="main_after" from="taper" to="main_end" numLanes="3" speed="33.33" priority="2" />
+</edges>
