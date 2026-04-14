@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<nodes>
+  <node id="main_start" x="0" y="0" type="priority" />
+  <node id="merge_start" x="0" y="-40" type="priority" />
+  <node id="merge_join" x="700" y="0" type="zipper" />
+  <node id="main_end" x="1000" y="0" type="priority" />
+</nodes>
