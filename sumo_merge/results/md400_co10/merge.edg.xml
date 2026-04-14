@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<edges>
-  <edge id="main_before" from="main_start" to="merge_join" numLanes="3" speed="33.33" priority="2" />
-  <edge id="main_after" from="merge_join" to="main_end" numLanes="3" speed="33.33" priority="2" />
-  <edge id="merge_lane" from="merge_start" to="merge_join" numLanes="1" speed="27.78" priority="1" shape="0.0,-10 65.076,-9.904 125.449,-9.632 181.34,-9.206 232.969,-8.648 280.554,-7.983 324.316,-7.231 364.475,-6.417 401.25,-5.562 434.861,-4.69 465.527,-3.823 493.469,-2.984 518.906,-2.195 542.058,-1.48 563.145,-0.86 582.385,-0.359 600,0.0" />
-</edges>

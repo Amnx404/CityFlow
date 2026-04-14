@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <edges>
-  <edge id="main_before" from="main_start" to="merge_join" numLanes="3" speed="33.33" priority="2" />
-  <edge id="main_after" from="merge_join" to="main_end" numLanes="3" speed="33.33" priority="2" />
-  <edge id="merge_lane" from="merge_start" to="merge_join" numLanes="1" speed="27.78" priority="1" shape="0.0,-30 97.614,-29.713 188.174,-28.896 272.01,-27.617 349.453,-25.945 420.831,-23.948 486.475,-21.694 546.713,-19.251 601.875,-16.688 652.291,-14.071 698.291,-11.47 740.204,-8.952 778.359,-6.586 813.087,-4.44 844.717,-2.581 873.578,-1.078 900,0.0" />
+  <edge id="main_before" from="main_start" to="merge_begin" numLanes="3" speed="33.33" priority="2" />
+  <edge id="ramp" from="ramp_start" to="merge_begin" numLanes="1" speed="27.78" priority="1" shape="0.0,-30 48.401,-29.759 93.69,-29.07 135.995,-27.986 175.446,-26.56 212.17,-24.843 246.296,-22.889 277.954,-20.749 307.27,-18.477 334.375,-16.125 359.396,-13.745 382.463,-11.389 403.704,-9.111 423.247,-6.962 441.221,-4.996 457.755,-3.264 472.977,-1.819 487.016,-0.713 500.0,0.0" />
+  <edge id="main_accel" from="merge_begin" to="taper" numLanes="4" speed="33.33" priority="2" />
+  <edge id="main_after" from="taper" to="main_end" numLanes="3" speed="33.33" priority="2" />
 </edges>

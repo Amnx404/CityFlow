@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <nodes>
   <node id="main_start" x="0" y="0" type="priority" />
-  <node id="merge_start" x="0" y="-10" type="priority" />
-  <node id="merge_join" x="900" y="0" type="zipper" />
-  <node id="main_end" x="1000" y="0" type="priority" />
+  <node id="ramp_start" x="0" y="-10" type="priority" />
+  <node id="merge_begin" x="500" y="0" type="priority" />
+  <node id="taper" x="600" y="0" type="zipper" />
+  <node id="main_end" x="1800" y="0" type="priority" />
 </nodes>

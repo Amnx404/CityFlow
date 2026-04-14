@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <connections>
-  <connection from="main_before" to="main_after" fromLane="0" toLane="0" />
-  <connection from="main_before" to="main_after" fromLane="1" toLane="1" />
-  <connection from="main_before" to="main_after" fromLane="2" toLane="2" />
-  <connection from="merge_lane" to="main_after" fromLane="0" toLane="0" type="zipper" />
+  <connection from="main_before" to="main_accel" fromLane="0" toLane="1" />
+  <connection from="main_before" to="main_accel" fromLane="1" toLane="2" />
+  <connection from="main_before" to="main_accel" fromLane="2" toLane="3" />
+  <connection from="ramp" to="main_accel" fromLane="0" toLane="0" />
+  <connection from="main_accel" to="main_after" fromLane="0" toLane="0" type="zipper" />
+  <connection from="main_accel" to="main_after" fromLane="1" toLane="0" type="zipper" />
+  <connection from="main_accel" to="main_after" fromLane="2" toLane="1" />
+  <connection from="main_accel" to="main_after" fromLane="3" toLane="2" />
 </connections>

@@ -1,39 +1,46 @@
 #!/usr/bin/env python3
 """
-Generate SUMO network XML files for a 3-lane road with a merging lane.
+Generate SUMO network for a 3-lane road with a proper on-ramp / acceleration lane.
+
+Topology
+--------
+
+  ramp_start(0, -offset)
+       |
+       | [ramp – 1 lane, Bézier curve]
+       |
+  merge_begin(RAMP_JOIN_X, 0)
+      /
+     /
+(0,0)--[main_before, 3L]-->merge_begin--[main_accel, 4L, merge_dist m]-->taper--[main_after, 3L]-->(ROAD_LENGTH, 0)
+
+At merge_begin the ramp becomes lane 0 (rightmost) of the 4-lane
+acceleration section.  At the taper node the 4-lane road drops back to
+3 lanes (lane-drop / zipper): lane 0 and lane 1 both feed into lane 0
+of main_after, so IDM + LC2013 vehicles in lane 0 start merging left
+well before the taper thanks to lcStrategic.
 
 Parameters
 ----------
-merge_distance : float
-    Distance (m) from the merge junction to the road end.
-    Controls how far before the end the zipper lane gives in.
-curvature_offset : float
-    Lateral distance (m) at which the merge lane starts away from the main road.
-    Larger value = tighter/more curved approach road.
-
-Network layout
---------------
-   merge_start(0, -offset)
-        |
-        | merge_lane (1 lane, curved)
-        |
-main_start(0,0) ---main_before(3 lanes)--- merge_join(X,0) ---main_after(3 lanes)--- main_end(1000,0)
+merge_distance  : length (m) of the 4-lane acceleration section
+                  (how far before the lane drop the ramp lane "gives in")
+curvature_offset: lateral distance (m) of the ramp start below the main
+                  road centre line – larger value → more curved approach
 """
 
-import math
 import subprocess
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-
-ROAD_LENGTH = 1000       # total length of the main road (m)
+# ── Layout constants ──────────────────────────────────────────────────────────
+ROAD_LENGTH  = 1800        # total road length (m)
+RAMP_JOIN_X  = 500         # x-coordinate where ramp meets the main road
 NUM_MAIN_LANES = 3
-MAIN_SPEED = "33.33"     # ~120 km/h
-MERGE_SPEED = "27.78"    # ~100 km/h on ramp
+MAIN_SPEED   = "33.33"     # ~120 km/h
+RAMP_SPEED   = "27.78"     # ~100 km/h
 
 
 def _indent(elem, level=0):
-    """Add pretty-print indentation to an ElementTree element."""
     pad = "\n" + "  " * level
     if len(elem):
         if not elem.text or not elem.text.strip():
@@ -51,94 +58,75 @@ def _indent(elem, level=0):
         elem.tail = "\n"
 
 
-def bezier_cubic(p0, p1, p2, p3, n=14):
-    """Sample a cubic bezier curve, returning n-1 interior points (excluding endpoints)."""
+def _bezier_cubic(p0, p1, p2, p3, n=16):
     pts = []
     for i in range(1, n):
         t = i / n
-        u = 1.0 - t
+        u = 1 - t
         x = u**3*p0[0] + 3*u**2*t*p1[0] + 3*u*t**2*p2[0] + t**3*p3[0]
         y = u**3*p0[1] + 3*u**2*t*p1[1] + 3*u*t**2*p2[1] + t**3*p3[1]
         pts.append((round(x, 3), round(y, 3)))
     return pts
 
 
-def merge_lane_shape(merge_join_x: float, curvature_offset: float) -> str:
+def _ramp_shape(curvature_offset: float) -> str:
     """
-    Build the SUMO edge shape string for the merge ramp.
+    Bézier shape from ramp_start (0, -offset) to merge_begin (RAMP_JOIN_X, 0).
 
-    The ramp starts at (0, -curvature_offset) and joins the main road at
-    (merge_join_x, 0).  The bezier control points create an S-curve:
-      - P1 stays at the lateral offset for 60% of the horizontal run
-        (vehicle travels alongside the main road before curving in)
-      - P2 arrives tangentially (nearly horizontal) at the merge point
-
-    Larger curvature_offset means the approach road is more curved.
+    Control points keep the ramp parallel to the main road for 60 % of the
+    horizontal run, then curve smoothly into the junction.
     """
     p0 = (0.0, -curvature_offset)
-    p3 = (merge_join_x, 0.0)
-
-    # Control point 1: keep the lane at the offset level for 60% of the run
-    p1 = (0.60 * merge_join_x, -curvature_offset)
-    # Control point 2: approach tangentially – still 20% offset, 15% before junction
-    p2 = (0.85 * merge_join_x, -curvature_offset * 0.15)
-
-    interior = bezier_cubic(p0, p1, p2, p3, n=16)
-
+    p3 = (float(RAMP_JOIN_X), 0.0)
+    p1 = (0.60 * RAMP_JOIN_X, -curvature_offset)   # stays offset
+    p2 = (0.85 * RAMP_JOIN_X, -curvature_offset * 0.1)  # tangential arrival
+    interior = _bezier_cubic(p0, p1, p2, p3, n=18)
     all_pts = [p0] + interior + [p3]
     return " ".join(f"{x},{y}" for x, y in all_pts)
 
 
-def write_nodes(out_dir: Path, merge_join_x: float, curvature_offset: float):
+def write_nodes(out_dir: Path, merge_distance: float, curvature_offset: float):
+    taper_x = RAMP_JOIN_X + merge_distance
     nodes = ET.Element("nodes")
     defs = [
-        ("main_start",  "0",                "0",                    "priority"),
-        ("merge_start", "0",                str(-curvature_offset), "priority"),
-        ("merge_join",  str(merge_join_x),  "0",                    "zipper"),
-        ("main_end",    str(ROAD_LENGTH),   "0",                    "priority"),
+        ("main_start",  "0",            "0",                    "priority"),
+        ("ramp_start",  "0",            str(-curvature_offset), "priority"),
+        ("merge_begin", str(RAMP_JOIN_X), "0",                  "priority"),
+        ("taper",       str(taper_x),   "0",                    "zipper"),
+        ("main_end",    str(ROAD_LENGTH), "0",                  "priority"),
     ]
     for nid, x, y, ntype in defs:
         ET.SubElement(nodes, "node", id=nid, x=x, y=y, type=ntype)
-
     _indent(nodes)
     path = out_dir / "merge.nod.xml"
     ET.ElementTree(nodes).write(str(path), encoding="unicode", xml_declaration=True)
     return path
 
 
-def write_edges(out_dir: Path, merge_join_x: float, curvature_offset: float):
+def write_edges(out_dir: Path, merge_distance: float, curvature_offset: float):
+    taper_x = RAMP_JOIN_X + merge_distance
     edges = ET.Element("edges")
 
-    # Main road before merge (3 lanes, straight)
+    # 3-lane main road before the ramp joins
     ET.SubElement(edges, "edge", attrib={
-        "id": "main_before",
-        "from": "main_start",
-        "to": "merge_join",
-        "numLanes": str(NUM_MAIN_LANES),
-        "speed": MAIN_SPEED,
-        "priority": "2",
+        "id": "main_before", "from": "main_start", "to": "merge_begin",
+        "numLanes": str(NUM_MAIN_LANES), "speed": MAIN_SPEED, "priority": "2",
     })
-
-    # Main road after merge (3 lanes, straight)
+    # Curved on-ramp (1 lane)
     ET.SubElement(edges, "edge", attrib={
-        "id": "main_after",
-        "from": "merge_join",
-        "to": "main_end",
-        "numLanes": str(NUM_MAIN_LANES),
-        "speed": MAIN_SPEED,
-        "priority": "2",
+        "id": "ramp", "from": "ramp_start", "to": "merge_begin",
+        "numLanes": "1", "speed": RAMP_SPEED, "priority": "1",
+        "shape": _ramp_shape(curvature_offset),
     })
-
-    # Merge ramp (1 lane, curved)
-    shape = merge_lane_shape(merge_join_x, curvature_offset)
+    # 4-lane acceleration section
     ET.SubElement(edges, "edge", attrib={
-        "id": "merge_lane",
-        "from": "merge_start",
-        "to": "merge_join",
-        "numLanes": "1",
-        "speed": MERGE_SPEED,
-        "priority": "1",
-        "shape": shape,
+        "id": "main_accel", "from": "merge_begin", "to": "taper",
+        "numLanes": str(NUM_MAIN_LANES + 1), "speed": MAIN_SPEED, "priority": "2",
+    })
+    # 3-lane main road after the lane drop
+    ET.SubElement(edges, "edge", attrib={
+        "id": "main_after", "from": "taper", "to": "main_end",
+        "numLanes": str(NUM_MAIN_LANES), "speed": MAIN_SPEED, "priority": "2",
     })
 
     _indent(edges)
@@ -150,23 +138,35 @@ def write_edges(out_dir: Path, merge_join_x: float, curvature_offset: float):
 def write_connections(out_dir: Path):
     connections = ET.Element("connections")
 
-    # Through lanes on main road
+    # ── merge_begin: 3-lane main + 1-lane ramp → 4-lane accel ────────────────
+    # Main road lanes shift right (ramp occupies lane 0 = rightmost)
     for i in range(NUM_MAIN_LANES):
         ET.SubElement(connections, "connection", attrib={
-            "from": "main_before",
-            "to": "main_after",
-            "fromLane": str(i),
-            "toLane": str(i),
+            "from": "main_before", "to": "main_accel",
+            "fromLane": str(i), "toLane": str(i + 1),
         })
-
-    # Merge ramp zippers into rightmost lane (lane 0)
+    # Ramp becomes the rightmost (acceleration) lane
     ET.SubElement(connections, "connection", attrib={
-        "from": "merge_lane",
-        "to": "main_after",
-        "fromLane": "0",
-        "toLane": "0",
-        "type": "zipper",
+        "from": "ramp", "to": "main_accel",
+        "fromLane": "0", "toLane": "0",
     })
+
+    # ── taper: 4-lane accel → 3-lane main (lane drop / zipper) ───────────────
+    # Lane 0 (accel/ramp lane) and lane 1 both feed into lane 0 of main_after
+    # LC2013 lcStrategic will cause lane-0 vehicles to merge left proactively
+    ET.SubElement(connections, "connection", attrib={
+        "from": "main_accel", "to": "main_after",
+        "fromLane": "0", "toLane": "0", "type": "zipper",
+    })
+    ET.SubElement(connections, "connection", attrib={
+        "from": "main_accel", "to": "main_after",
+        "fromLane": "1", "toLane": "0", "type": "zipper",
+    })
+    for i in range(2, NUM_MAIN_LANES + 1):          # lanes 2, 3 → 1, 2
+        ET.SubElement(connections, "connection", attrib={
+            "from": "main_accel", "to": "main_after",
+            "fromLane": str(i), "toLane": str(i - 1),
+        })
 
     _indent(connections)
     path = out_dir / "merge.con.xml"
@@ -174,9 +174,9 @@ def write_connections(out_dir: Path):
     return path
 
 
-def build_net(out_dir: Path, nod: Path, edg: Path, con: Path) -> Path:
+def build_net(out_dir, nod, edg, con):
     net_path = out_dir / "merge.net.xml"
-    cmd = [
+    result = subprocess.run([
         "netconvert",
         "--node-files", str(nod),
         "--edge-files", str(edg),
@@ -185,35 +185,26 @@ def build_net(out_dir: Path, nod: Path, edg: Path, con: Path) -> Path:
         "--no-warnings",
         "--junctions.join",
         "--default.lanewidth", "3.2",
-    ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    ], capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(f"netconvert failed:\n{result.stderr}\n{result.stdout}")
     return net_path
 
 
-def generate_network(merge_distance: float, curvature_offset: float, out_dir: Path) -> Path:
+def generate_network(merge_distance: float, curvature_offset: float,
+                     out_dir: Path) -> Path:
     """
-    Full pipeline: write XML sources -> run netconvert -> return .net.xml path.
+    Build the SUMO .net.xml for one parameter combination.
 
-    Parameters
-    ----------
-    merge_distance : float
-        Metres from merge junction to road end.
-    curvature_offset : float
-        Lateral offset (m) of the merge lane start from the main road centre.
-    out_dir : Path
-        Directory to write all output files into.
+    merge_distance  : length (m) of the 4-lane acceleration section
+    curvature_offset: lateral start offset (m) of the on-ramp
+    out_dir         : directory to write files into
     """
     out_dir.mkdir(parents=True, exist_ok=True)
-
-    merge_join_x = ROAD_LENGTH - merge_distance
-
-    nod = write_nodes(out_dir, merge_join_x, curvature_offset)
-    edg = write_edges(out_dir, merge_join_x, curvature_offset)
+    nod = write_nodes(out_dir, merge_distance, curvature_offset)
+    edg = write_edges(out_dir, merge_distance, curvature_offset)
     con = write_connections(out_dir)
-    net = build_net(out_dir, nod, edg, con)
-    return net
+    return build_net(out_dir, nod, edg, con)
 
 
 if __name__ == "__main__":

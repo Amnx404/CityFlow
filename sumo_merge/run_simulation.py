@@ -98,13 +98,16 @@ def run_simulation(cfg_path: Path, merge_join_x: float) -> dict:
     Parameters
     ----------
     cfg_path      : path to the .sumocfg file
-    merge_join_x  : x-coordinate of the zipper junction (m)
+    merge_join_x  : x-coordinate of the taper/lane-drop node (m)
+                    The monitored zone covers from RAMP_JOIN_X upstream to
+                    ZONE_DOWNSTREAM past the taper.
 
     Returns
     -------
     dict of safety metrics (see module docstring)
     """
-    zone_lo = max(0.0, merge_join_x - ZONE_UPSTREAM)
+    from generate_network import RAMP_JOIN_X
+    zone_lo = max(0.0, RAMP_JOIN_X - ZONE_UPSTREAM)
     zone_hi = merge_join_x + ZONE_DOWNSTREAM
 
     sumo_cmd = [

@@ -5,12 +5,12 @@ Run all 4×4 = 16 merge-scenario combinations and write safety_metrics.csv.
 Parameter grids
 ---------------
 merge_distance  (m) : [100, 200, 300, 400]
-    Distance from the zipper merge junction to the end of the road.
-    Smaller value → the zipper lane "gives in" closer to the road end.
+    Length of the 4-lane acceleration section before the lane drop.
+    Larger value → more distance for ramp vehicles to merge left.
 
 curvature_offset (m) : [10, 20, 30, 40]
-    Lateral distance of the merge ramp start from the main road.
-    Larger value → tighter / more-curved approach geometry.
+    Lateral distance of the ramp start below the main road centre line.
+    Larger value → more curved on-ramp approach geometry.
 
 Vehicle model  : IDM  with SUMO defaults
 Lane-change    : LC2013 with SUMO defaults
@@ -26,7 +26,7 @@ from pathlib import Path
 # ── Ensure local modules are importable ───────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent))
 
-from generate_network import generate_network, ROAD_LENGTH
+from generate_network import generate_network, ROAD_LENGTH, RAMP_JOIN_X
 from generate_routes  import generate_routes
 from run_simulation   import run_simulation, write_sumocfg
 
@@ -83,7 +83,7 @@ def run_all():
             cfg = write_sumocfg(net, rou, out_dir, sim_id)
 
             # 4. Run and collect metrics
-            merge_join_x = ROAD_LENGTH - md
+            merge_join_x = RAMP_JOIN_X + md   # x-coordinate of taper node
             metrics = run_simulation(cfg, merge_join_x)
 
             row = {

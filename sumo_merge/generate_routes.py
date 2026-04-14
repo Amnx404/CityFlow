@@ -70,7 +70,7 @@ TEMPLATE = """\
     <!-- On-ramp / merge flow -->
     <flow id="merge_flow"
           type="car_idm"
-          from="merge_lane"
+          from="ramp"
           to="main_after"
           begin="0"
           end="{sim_duration}"

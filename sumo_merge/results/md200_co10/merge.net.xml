@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-04-14T06:30:26.707142+00:00 by Eclipse SUMO netconvert 1.26.0
+<!-- generated on 2026-04-14T09:48:10.168234+00:00 by Eclipse SUMO netconvert 1.26.0
 <netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
@@ -30,49 +30,75 @@
 
 <net version="1.20" junctionCornerDetail="5" limitTurnSpeed="5.50" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
 
-    <location netOffset="0.00,10.00" convBoundary="0.00,0.00,1000.00,10.00" origBoundary="0.00,-10.00,1000.00,0.00" projParameter="!"/>
+    <location netOffset="0.00,10.00" convBoundary="0.00,0.00,1800.00,10.00" origBoundary="0.00,-10.00,1800.00,0.00" projParameter="!"/>
 
-    <edge id=":merge_join_0" function="internal" type="zipper">
-        <lane id=":merge_join_0_0" index="0" speed="30.55" length="10.90" width="3.20" shape="795.91,8.34 798.57,7.38 799.92,5.20 801.29,3.00 804.03,2.00"/>
+    <edge id=":merge_begin_0" function="internal">
+        <lane id=":merge_begin_0_0" index="0" speed="30.55" length="10.07" width="3.20" shape="498.39,8.37 501.54,-1.20"/>
     </edge>
-    <edge id=":merge_join_1" function="internal">
-        <lane id=":merge_join_1_0" index="0" speed="33.33" length="8.07" width="3.20" shape="796.01,2.00 804.03,2.00"/>
-        <lane id=":merge_join_1_1" index="1" speed="33.33" length="8.07" width="3.20" shape="795.96,5.20 804.03,5.20"/>
-        <lane id=":merge_join_1_2" index="2" speed="33.33" length="8.07" width="3.20" shape="795.91,8.40 804.03,8.40"/>
+    <edge id=":merge_begin_1" function="internal">
+        <lane id=":merge_begin_1_0" index="0" speed="33.33" length="3.09" width="3.20" shape="498.51,2.00 501.54,2.00"/>
+        <lane id=":merge_begin_1_1" index="1" speed="33.33" length="3.09" width="3.20" shape="498.45,5.20 501.54,5.20"/>
+        <lane id=":merge_begin_1_2" index="2" speed="33.33" length="3.09" width="3.20" shape="498.39,8.40 501.54,8.40"/>
     </edge>
-
-    <edge id="main_after" from="merge_join" to="main_end" priority="2">
-        <lane id="main_after_0" index="0" speed="33.33" length="195.97" width="3.20" shape="804.03,2.00 1000.00,2.00"/>
-        <lane id="main_after_1" index="1" speed="33.33" length="195.97" width="3.20" shape="804.03,5.20 1000.00,5.20"/>
-        <lane id="main_after_2" index="2" speed="33.33" length="195.97" width="3.20" shape="804.03,8.40 1000.00,8.40"/>
-    </edge>
-    <edge id="main_before" from="main_start" to="merge_join" priority="2">
-        <lane id="main_before_0" index="0" speed="33.33" length="795.96" width="3.20" shape="0.00,2.00 796.01,2.00"/>
-        <lane id="main_before_1" index="1" speed="33.33" length="795.96" width="3.20" shape="0.00,5.20 795.96,5.20"/>
-        <lane id="main_before_2" index="2" speed="33.33" length="795.96" width="3.20" shape="0.00,8.40 795.91,8.40"/>
-    </edge>
-    <edge id="merge_lane" from="merge_start" to="merge_join" priority="1" shape="0.00,0.00 86.77,0.10 167.27,0.37 241.79,0.79 310.62,1.35 374.07,2.02 432.42,2.77 485.97,3.58 535.00,4.44 579.81,5.31 620.70,6.18 657.96,7.02 691.88,7.80 722.74,8.52 750.86,9.14 776.51,9.64 800.00,10.00">
-        <lane id="merge_lane_0" index="0" speed="27.78" length="795.99" width="3.20" shape="0.00,-1.60 86.77,-1.50 167.28,-1.23 241.80,-0.81 310.63,-0.25 374.09,0.42 432.44,1.17 486.00,1.98 535.03,2.84 579.84,3.71 620.74,4.58 658.00,5.42 691.92,6.20 722.78,6.92 750.89,7.54 776.54,8.04 795.91,8.34"/>
+    <edge id=":taper_0" function="internal" type="zipper">
+        <lane id=":taper_0_0" index="0" speed="33.33" length="8.20" width="3.20" shape="696.00,-1.20 698.46,-0.70 700.00,0.40 701.54,1.50 704.00,2.00"/>
+        <lane id=":taper_0_1" index="1" speed="33.33" length="8.20" width="3.20" shape="696.00,2.00 704.00,2.00"/>
+        <lane id=":taper_0_2" index="2" speed="33.33" length="8.20" width="3.20" shape="696.00,5.20 704.00,5.20"/>
+        <lane id=":taper_0_3" index="3" speed="33.33" length="8.20" width="3.20" shape="696.00,8.40 704.00,8.40"/>
     </edge>
 
-    <junction id="main_end" type="dead_end" x="1000.00" y="10.00" incLanes="main_after_0 main_after_1 main_after_2" intLanes="" shape="1000.00,0.40 1000.00,10.00"/>
+    <edge id="main_accel" from="merge_begin" to="taper" priority="2">
+        <lane id="main_accel_0" index="0" speed="33.33" length="194.46" width="3.20" acceleration="1" shape="501.54,-1.20 696.00,-1.20"/>
+        <lane id="main_accel_1" index="1" speed="33.33" length="194.46" width="3.20" shape="501.54,2.00 696.00,2.00"/>
+        <lane id="main_accel_2" index="2" speed="33.33" length="194.46" width="3.20" shape="501.54,5.20 696.00,5.20"/>
+        <lane id="main_accel_3" index="3" speed="33.33" length="194.46" width="3.20" shape="501.54,8.40 696.00,8.40"/>
+    </edge>
+    <edge id="main_after" from="taper" to="main_end" priority="2">
+        <lane id="main_after_0" index="0" speed="33.33" length="1096.00" width="3.20" shape="704.00,2.00 1800.00,2.00"/>
+        <lane id="main_after_1" index="1" speed="33.33" length="1096.00" width="3.20" shape="704.00,5.20 1800.00,5.20"/>
+        <lane id="main_after_2" index="2" speed="33.33" length="1096.00" width="3.20" shape="704.00,8.40 1800.00,8.40"/>
+    </edge>
+    <edge id="main_before" from="main_start" to="merge_begin" priority="2">
+        <lane id="main_before_0" index="0" speed="33.33" length="498.45" width="3.20" shape="0.00,2.00 498.51,2.00"/>
+        <lane id="main_before_1" index="1" speed="33.33" length="498.45" width="3.20" shape="0.00,5.20 498.45,5.20"/>
+        <lane id="main_before_2" index="2" speed="33.33" length="498.45" width="3.20" shape="0.00,8.40 498.39,8.40"/>
+    </edge>
+    <edge id="ramp" from="ramp_start" to="merge_begin" priority="1" shape="0.00,0.00 48.40,0.08 93.69,0.31 136.00,0.67 175.45,1.15 212.17,1.72 246.30,2.37 277.95,3.08 307.27,3.84 334.38,4.62 359.40,5.42 382.46,6.20 403.70,6.96 423.25,7.68 441.22,8.34 457.76,8.91 472.98,9.39 487.02,9.76 500.00,10.00">
+        <lane id="ramp_0" index="0" speed="27.78" length="498.52" width="3.20" shape="0.00,-1.60 48.41,-1.52 93.70,-1.29 136.02,-0.93 175.47,-0.45 212.20,0.12 246.33,0.77 277.99,1.48 307.31,2.24 334.43,3.02 359.45,3.82 382.52,4.60 403.76,5.36 423.31,6.08 441.28,6.74 457.81,7.31 473.03,7.79 487.06,8.16 498.39,8.37"/>
+    </edge>
+
+    <junction id="main_end" type="dead_end" x="1800.00" y="10.00" incLanes="main_after_0 main_after_1 main_after_2" intLanes="" shape="1800.00,0.40 1800.00,10.00"/>
     <junction id="main_start" type="dead_end" x="0.00" y="10.00" incLanes="" intLanes="" shape="0.00,10.00 0.00,0.40"/>
-    <junction id="merge_join" type="zipper" x="800.00" y="10.00" incLanes="merge_lane_0 main_before_0 main_before_1 main_before_2" intLanes=":merge_join_0_0 :merge_join_1_0 :merge_join_1_1 :merge_join_1_2" shape="804.03,10.00 804.03,0.40 796.03,0.40 795.89,9.94">
+    <junction id="merge_begin" type="priority" x="500.00" y="10.00" incLanes="ramp_0 main_before_0 main_before_1 main_before_2" intLanes=":merge_begin_0_0 :merge_begin_1_0 :merge_begin_1_1 :merge_begin_1_2" shape="501.54,10.00 501.54,-2.80 498.54,0.40 498.36,9.97">
+        <request index="0" response="0000" foes="0000" cont="0"/>
+        <request index="1" response="0000" foes="0000" cont="0"/>
+        <request index="2" response="0000" foes="0000" cont="0"/>
+        <request index="3" response="0000" foes="0000" cont="0"/>
+    </junction>
+    <junction id="ramp_start" type="dead_end" x="0.00" y="0.00" incLanes="" intLanes="" shape="0.00,0.00 0.01,-3.20"/>
+    <junction id="taper" type="zipper" x="700.00" y="10.00" incLanes="main_accel_0 main_accel_1 main_accel_2 main_accel_3" intLanes=":taper_0_0 :taper_0_1 :taper_0_2 :taper_0_3" shape="704.00,10.00 704.00,0.40 700.97,-0.43 699.03,-1.97 697.79,-2.56 696.00,-2.80 696.00,10.00">
         <request index="0" response="0010" foes="0010" cont="0"/>
         <request index="1" response="0001" foes="0001" cont="0"/>
         <request index="2" response="0000" foes="0000" cont="0"/>
         <request index="3" response="0000" foes="0000" cont="0"/>
     </junction>
-    <junction id="merge_start" type="dead_end" x="0.00" y="0.00" incLanes="" intLanes="" shape="-0.00,0.00 0.00,-3.20"/>
 
-    <connection from="main_before" to="main_after" fromLane="0" toLane="0" via=":merge_join_1_0" dir="s" state="Z"/>
-    <connection from="main_before" to="main_after" fromLane="1" toLane="1" via=":merge_join_1_1" dir="s" state="M"/>
-    <connection from="main_before" to="main_after" fromLane="2" toLane="2" via=":merge_join_1_2" dir="s" state="M"/>
-    <connection from="merge_lane" to="main_after" fromLane="0" toLane="0" type="zipper" via=":merge_join_0_0" dir="s" state="Z"/>
+    <connection from="main_accel" to="main_after" fromLane="0" toLane="0" type="zipper" via=":taper_0_0" dir="s" state="Z"/>
+    <connection from="main_accel" to="main_after" fromLane="1" toLane="0" type="zipper" via=":taper_0_1" dir="s" state="Z"/>
+    <connection from="main_accel" to="main_after" fromLane="2" toLane="1" keepClear="0" via=":taper_0_2" dir="s" state="M"/>
+    <connection from="main_accel" to="main_after" fromLane="3" toLane="2" keepClear="0" via=":taper_0_3" dir="s" state="M"/>
+    <connection from="main_before" to="main_accel" fromLane="0" toLane="1" via=":merge_begin_1_0" dir="s" state="M"/>
+    <connection from="main_before" to="main_accel" fromLane="1" toLane="2" via=":merge_begin_1_1" dir="s" state="M"/>
+    <connection from="main_before" to="main_accel" fromLane="2" toLane="3" via=":merge_begin_1_2" dir="s" state="M"/>
+    <connection from="ramp" to="main_accel" fromLane="0" toLane="0" via=":merge_begin_0_0" dir="s" state="M"/>
 
-    <connection from=":merge_join_0" to="main_after" fromLane="0" toLane="0" dir="s" state="M"/>
-    <connection from=":merge_join_1" to="main_after" fromLane="0" toLane="0" dir="s" state="M"/>
-    <connection from=":merge_join_1" to="main_after" fromLane="1" toLane="1" dir="s" state="M"/>
-    <connection from=":merge_join_1" to="main_after" fromLane="2" toLane="2" dir="s" state="M"/>
+    <connection from=":merge_begin_0" to="main_accel" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":merge_begin_1" to="main_accel" fromLane="0" toLane="1" dir="s" state="M"/>
+    <connection from=":merge_begin_1" to="main_accel" fromLane="1" toLane="2" dir="s" state="M"/>
+    <connection from=":merge_begin_1" to="main_accel" fromLane="2" toLane="3" dir="s" state="M"/>
+    <connection from=":taper_0" to="main_after" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":taper_0" to="main_after" fromLane="1" toLane="0" dir="s" state="M"/>
+    <connection from=":taper_0" to="main_after" fromLane="2" toLane="1" dir="s" state="M"/>
+    <connection from=":taper_0" to="main_after" fromLane="3" toLane="2" dir="s" state="M"/>
 
 </net>
